@@ -76,7 +76,7 @@ Suggested next checks:
 python -m unittest discover -s tests -v
 ```
 
-Unit tests inject fake DNS and TCP dependencies and **do not send packets**. A separate test creates a temporary listener on `127.0.0.1` to verify a real local TCP handshake; it does not contact external systems. GitHub Actions is **configured** to test Python 3.11–3.13 on Linux and Windows; remote CI has not run yet. Any future external-network integration tests must be separately approved and run only against systems you control or are authorized to test.
+Unit tests inject fake DNS and TCP dependencies and **do not send packets**. A separate test creates a temporary listener on `127.0.0.1` to verify a real local TCP handshake; it does not contact external systems. GitHub Actions is **configured** to test Python 3.11–3.13 on Linux and Windows; the initial GitHub Actions run passed all six jobs ([evidence](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40427289295)). Any future external-network integration tests must be separately approved and run only against systems you control or are authorized to test.
 
 ## Repository structure
 
@@ -96,7 +96,7 @@ Do not put employer IP ranges, production hostnames, credentials, troubleshootin
 ## Roadmap and release gate
 
 - **M1:** single-target diagnostics, 29 unit/loopback tests, documentation and synthetic demo. Windows installation and local tests confirmed by the owner.
-- **M2 (current):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. Remote CI evidence is pending.
+- **M2 (current):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
 - **M3 (proposal only):** define a small next diagnostic capability and its acceptance criteria after reviewing M2 results. No implementation is authorized.
 
 Before making this repository **public**: review all code and git history for sensitive material; choose a license; confirm the documentation and sample output; run CI; and make the owner approval decision. A passing test suite does not prove cross-network connectivity in every environment.
