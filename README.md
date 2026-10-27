@@ -129,7 +129,7 @@ Do not put employer IP ranges, production hostnames, credentials, troubleshootin
 
 - **M1:** single-target diagnostics, 29 unit/loopback tests, documentation and synthetic demo. Windows installation and local tests confirmed by the owner.
 - **M2 (current):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
-- **M3 (review candidate):** optional validated direct TLS diagnostics, mocked failures and controlled loopback integration tests. Owner-approved scope; merge awaits review and CI evidence.
+- **M3 (integrated):** optional validated direct TLS diagnostics, mocked failures and controlled loopback integration tests. [PR #1](https://github.com/ikayofoegbu/network-ops-toolkit/pull/1) merged after owner approval; all six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40429821370) passed with 54 tests per job.
 
 Before making this repository **public**: review all code and git history for sensitive material; choose a license; confirm the documentation and sample output; run CI; and make the owner approval decision. A passing test suite does not prove cross-network connectivity in every environment.
 
