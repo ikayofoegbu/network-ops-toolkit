@@ -1,0 +1,50 @@
+{
+  "schema_version": 2,
+  "target": {
+    "host": "service.example",
+    "port": 443,
+    "timeout_per_phase_seconds": 2.0
+  },
+  "dns": {
+    "status": "resolved",
+    "addresses": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4"
+      }
+    ]
+  },
+  "tcp": {
+    "status": "connected",
+    "attempts": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4",
+        "outcome": "connected",
+        "elapsed_ms": 5.0,
+        "tls": {
+          "status": "certificate_invalid",
+          "verify_code": 20,
+          "verify_message": "unable to get local issuer certificate",
+          "elapsed_ms": 3.0
+        }
+      }
+    ],
+    "skipped_addresses": 0
+  },
+  "assessment": {
+    "classification": "tls_failed",
+    "interpretation": "TCP connectivity succeeded, but no TLS handshake passed validation. Inspect each TLS outcome; the root cause is not established.",
+    "next_checks": [
+      "Review certificate trust, validity and hostname errors before changing configuration.",
+      "For timeouts or handshake errors, check the service's TLS configuration and path using authorized tooling."
+    ]
+  },
+  "duration_ms": 8.0,
+  "tls": {
+    "status": "failed",
+    "server_hostname": "service.example",
+    "certificate_verification": "required"
+  },
+  "synthetic_demo": true
+}

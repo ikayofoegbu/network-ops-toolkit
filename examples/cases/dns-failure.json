@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "target": {
+    "host": "service.example",
+    "port": 443,
+    "timeout_per_address_seconds": 2.0
+  },
+  "dns": {
+    "status": "failed",
+    "addresses": [],
+    "error_code": -2
+  },
+  "tcp": {
+    "status": "not_run",
+    "attempts": [],
+    "skipped_addresses": 0
+  },
+  "assessment": {
+    "classification": "dns_failed",
+    "interpretation": "The hostname could not be resolved. This does not identify the cause.",
+    "next_checks": [
+      "Check the hostname for mistakes.",
+      "Check resolver settings and DNS reachability."
+    ]
+  },
+  "duration_ms": 5.0,
+  "synthetic_demo": true
+}

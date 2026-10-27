@@ -106,7 +106,25 @@ certificate revocation status, or a complete security assessment.
 python -m unittest discover -s tests -v
 ```
 
-Unit tests inject fake DNS and TCP dependencies and **do not send packets**. Local integration tests create temporary listeners on `127.0.0.1` to verify real TCP and TLS behavior, including trusted TLS, hostname mismatch, untrusted certificate and handshake timeout. They do not contact external systems. TLS fixtures are disposable test material; their CA is trusted only inside individual test contexts. The test suite currently contains 54 tests. GitHub Actions is **configured** to test Python 3.11–3.13 on Linux and Windows; the initial GitHub Actions run passed all six jobs ([evidence](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40427289295)). Any future external-network integration tests must be separately approved and run only against systems you control or are authorized to test.
+Unit tests inject fake DNS and TCP dependencies and **do not send packets**. Local integration tests create temporary listeners on `127.0.0.1` to verify real TCP and TLS behavior, including trusted TLS, hostname mismatch, untrusted certificate and handshake timeout. They do not contact external systems. TLS fixtures are disposable test material; their CA is trusted only inside individual test contexts. The test suite currently contains 58 tests, including checks for the synthetic interview examples. GitHub Actions is **configured** to test Python 3.11–3.13 on Linux and Windows; the initial GitHub Actions run passed all six jobs ([evidence](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40427289295)). Any future external-network integration tests must be separately approved and run only against systems you control or are authorized to test.
+
+## Interview demonstration
+
+Three reproducible synthetic cases illustrate DNS failure, TCP refusal and TCP
+success with TLS validation failure. They send no network traffic and use the
+existing report/assessment path with fake observations:
+
+```text
+python examples/troubleshooting_cases.py all
+python examples/troubleshooting_cases.py tls-failure --json
+```
+
+The renderer returns 0 when it prints successfully, including an expected
+simulated failure. It is distinct from the live probe's connectivity exit codes.
+See the [case explanations](docs/TROUBLESHOOTING_CASES.md),
+[engineering case study](docs/ENGINEERING_CASE_STUDY.md) and
+[five-minute Windows demo guide](docs/WINDOWS_DEMO.md). The guide is prepared;
+owner rehearsal on a Windows device is still required before an interview.
 
 ## Repository structure
 
@@ -128,8 +146,10 @@ Do not put employer IP ranges, production hostnames, credentials, troubleshootin
 ## Roadmap and release gate
 
 - **M1:** single-target diagnostics, 29 unit/loopback tests, documentation and synthetic demo. Windows installation and local tests confirmed by the owner.
-- **M2 (current):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
+- **M2 (integrated):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
 - **M3 (integrated):** optional validated direct TLS diagnostics, mocked failures and controlled loopback integration tests. [PR #1](https://github.com/ikayofoegbu/network-ops-toolkit/pull/1) merged after owner approval; all six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40429821370) passed with 54 tests per job.
+
+- **M4 (interview preparation):** three synthetic cases, engineering case study and prepared Windows demo guide; no public release implied.
 
 Before making this repository **public**: review all code and git history for sensitive material; choose a license; confirm the documentation and sample output; run CI; and make the owner approval decision. A passing test suite does not prove cross-network connectivity in every environment.
 

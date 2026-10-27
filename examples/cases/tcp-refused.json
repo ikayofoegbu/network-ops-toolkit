@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "target": {
+    "host": "service.example",
+    "port": 443,
+    "timeout_per_address_seconds": 2.0
+  },
+  "dns": {
+    "status": "resolved",
+    "addresses": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4"
+      }
+    ]
+  },
+  "tcp": {
+    "status": "failed",
+    "attempts": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4",
+        "outcome": "refused",
+        "elapsed_ms": 5.0
+      }
+    ],
+    "skipped_addresses": 0
+  },
+  "assessment": {
+    "classification": "tcp_failed",
+    "interpretation": "At least one address refused the TCP connection; no connection succeeded. The rejecting device is not identified.",
+    "next_checks": [
+      "Confirm the service is listening on the selected port.",
+      "Check endpoint and intermediary policies."
+    ]
+  },
+  "duration_ms": 5.0,
+  "synthetic_demo": true
+}
