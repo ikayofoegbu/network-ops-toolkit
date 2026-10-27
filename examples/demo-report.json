@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "target": {
+    "host": "demo.example",
+    "port": 443,
+    "timeout_per_address_seconds": 2.0
+  },
+  "dns": {
+    "status": "resolved",
+    "addresses": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4"
+      }
+    ]
+  },
+  "tcp": {
+    "status": "connected",
+    "attempts": [
+      {
+        "address": "192.0.2.10",
+        "family": "IPv4",
+        "outcome": "connected",
+        "elapsed_ms": 12.4
+      }
+    ],
+    "skipped_addresses": 0
+  },
+  "assessment": {
+    "classification": "tcp_connected",
+    "interpretation": "At least one TCP handshake succeeded. Application health was not tested.",
+    "next_checks": [
+      "If the application still fails, check TLS and application-layer responses."
+    ]
+  },
+  "duration_ms": 12.4,
+  "synthetic_demo": true
+}
