@@ -15,6 +15,9 @@ FIXTURES = Path(__file__).parent / "fixtures" / "tls"
 @contextmanager
 def local_server(stall=False):
     server_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    # No session resumption is exercised. Avoid late TLS 1.3 ticket writes to
+    # a handshake-only client which has already closed its socket.
+    server_context.num_tickets = 0
     server_context.load_cert_chain(FIXTURES / "localhost.pem", FIXTURES / "localhost-test-key.pem")
     stop = threading.Event()
     errors = []
@@ -36,8 +39,11 @@ def local_server(stall=False):
                         try:
                             with server_context.wrap_socket(connection, server_side=True):
                                 pass
-                        except ssl.SSLError:
-                            # The client deliberately rejects untrusted or mismatched certificates.
+                        except (ssl.SSLError, ConnectionResetError, ConnectionAbortedError):
+                            # Certificate rejection and immediate client close can
+                            # surface as TLS alerts or Windows peer-close errors.
+                            # Tests still assert the exact client report below;
+                            # a failed client handshake cannot pass the success test.
                             pass
         except Exception as exc:
             errors.append(exc)
