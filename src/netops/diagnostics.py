@@ -10,8 +10,11 @@ import errno
 import ipaddress
 import re
 import socket
+import ssl
 from time import perf_counter
 from typing import Any, Callable
+
+from .tls import annotate_report, client_context, handshake, validate_context
 
 MAX_ADDRESSES = 8
 _FAMILY_NAMES = {socket.AF_INET: "IPv4", socket.AF_INET6: "IPv6"}
@@ -40,16 +43,24 @@ def validate_target(host: str, port: int, timeout: float) -> None:
             raise ValueError("host must be a hostname or IP address, not a URL or path") from None
 
 
-def _attempt(info: tuple[Any, ...], timeout: float) -> dict[str, Any]:
+def _attempt(
+    info: tuple[Any, ...], timeout: float, *,
+    server_hostname: str | None = None, tls_context: ssl.SSLContext | None = None,
+) -> dict[str, Any]:
     """Try one TCP connection and classify only directly observed socket results."""
     family, socktype, proto, _, sockaddr = info
     started = perf_counter()
     outcome = "connected"
     error_code: int | None = None
+    tcp_elapsed: float | None = None
+    tls_result: dict[str, Any] = {"status": "not_run"}
     try:
         with socket.socket(family, socktype, proto) as connection:
             connection.settimeout(timeout)
             connection.connect(sockaddr)
+            tcp_elapsed = (perf_counter() - started) * 1000
+            if tls_context is not None:
+                tls_result = handshake(connection, tls_context, server_hostname)
     except ConnectionRefusedError as exc:
         outcome, error_code = "refused", exc.errno
     except TimeoutError as exc:
@@ -69,8 +80,10 @@ def _attempt(info: tuple[Any, ...], timeout: float) -> dict[str, Any]:
         "address": sockaddr[0],
         "family": _FAMILY_NAMES[family],
         "outcome": outcome,
-        "elapsed_ms": round((perf_counter() - started) * 1000, 2),
+        "elapsed_ms": round(tcp_elapsed if tcp_elapsed is not None else (perf_counter() - started) * 1000, 2),
     }
+    if tls_context is not None:
+        result["tls"] = tls_result
     if error_code is not None:
         result["os_error_code"] = error_code
     return result
@@ -128,15 +141,29 @@ def probe(
     *,
     resolver: Resolver | None = None,
     connector: Connector | None = None,
+    tls: bool = False,
+    tls_context: ssl.SSLContext | None = None,
 ) -> dict[str, Any]:
     """Resolve one host and try up to MAX_ADDRESSES distinct addresses in order.
 
-    The timeout is *per address*, not an overall deadline. No ping, scanning,
-    authentication or application-layer checks are performed.
+    The timeout is per TCP connect and optional TLS handshake, not an overall
+    deadline. No ping, scanning or application-layer checks are performed.
+    Optional direct TLS validates the
+    certificate and requested hostname on the same TCP connection.
     """
     validate_target(host, port, timeout)
+    if tls_context is not None and not tls:
+        raise ValueError("tls_context requires tls=True")
+    server_hostname = host.rstrip(".")
+    if tls:
+        tls_context = tls_context if tls_context is not None else client_context()
+        validate_context(tls_context)
     resolver = resolver if resolver is not None else socket.getaddrinfo
-    connector = connector if connector is not None else _attempt
+    if connector is None:
+        if tls:
+            connector = lambda info, limit: _attempt(info, limit, server_hostname=server_hostname, tls_context=tls_context)
+        else:
+            connector = _attempt
     started = perf_counter()
 
     try:
@@ -150,7 +177,7 @@ def probe(
             "assessment": _assessment("failed", []),
         }
         report["duration_ms"] = round((perf_counter() - started) * 1000, 2)
-        return report
+        return annotate_report(report, server_hostname) if tls else report
 
     distinct: list[tuple[Any, ...]] = []
     seen: set[tuple[Any, ...]] = set()
@@ -185,7 +212,7 @@ def probe(
             "next_checks": ["Check the hostname, local network stack and DNS records."],
         }
     report["duration_ms"] = round((perf_counter() - started) * 1000, 2)
-    return report
+    return annotate_report(report, server_hostname) if tls else report
 
 
 def demo_report() -> dict[str, Any]:
@@ -200,3 +227,4 @@ def demo_report() -> dict[str, Any]:
     report["duration_ms"] = 12.4
     report["synthetic_demo"] = True
     return report
+

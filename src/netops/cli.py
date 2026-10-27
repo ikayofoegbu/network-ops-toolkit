@@ -20,11 +20,17 @@ def format_text(report: dict[str, Any]) -> str:
     for address in report["dns"]["addresses"]:
         lines.append(f"  Resolved: {address['address']} ({address['family']})")
     lines.append(f"TCP: {report['tcp']['status']}")
+    if "tls" in report:
+        lines.append(f"TLS: {report['tls']['status']} (certificate and hostname verification required)")
     for attempt in report["tcp"]["attempts"]:
         lines.append(
             f"  {attempt['address']} ({attempt['family']}): {attempt['outcome']} "
             f"in {attempt['elapsed_ms']:.2f} ms"
         )
+        if "tls" in attempt:
+            observed = attempt["tls"]
+            detail = observed.get("verify_message") or observed.get("reason") or observed.get("protocol")
+            lines.append(f"    TLS: {observed['status']}" + (f" ({detail})" if detail else ""))
     if report["tcp"]["skipped_addresses"]:
         lines.append(f"  Not attempted: {report['tcp']['skipped_addresses']} additional addresses")
     lines.append(f"Assessment: {report['assessment']['classification']}")
@@ -60,8 +66,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     command = subs.add_parser("probe", help="Perform local DNS and TCP diagnostics for one host and port")
     command.add_argument("--host", required=True, help="Hostname or IP address, not a URL")
     command.add_argument("--port", type=positive_port, required=True, help="TCP port 1–65535")
-    command.add_argument("--timeout", type=bounded_timeout, default=2.0, help="Per-address timeout in seconds (0.1–10)")
+    command.add_argument("--timeout", type=bounded_timeout, default=2.0, help="Timeout for each address's TCP connect and optional TLS handshake (0.1–10 seconds per phase)")
     command.add_argument("--json", action="store_true", help="Machine-readable JSON output")
+    command.add_argument("--tls", action="store_true", help="Validate a direct TLS handshake and certificate on the same TCP connection")
     demo = subs.add_parser("demo", help="Print deterministic synthetic output without network activity")
     demo.add_argument("--json", action="store_true", help="Machine-readable JSON output")
 
@@ -70,11 +77,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = demo_report()
     else:
         try:
-            report = probe(args.host, args.port, args.timeout)
+            report = probe(args.host, args.port, args.timeout, tls=True) if args.tls else probe(args.host, args.port, args.timeout)
         except ValueError as exc:
             parser.error(str(exc))
     if args.json:
         print(json.dumps(report, indent=2))
     else:
         print(format_text(report))
-    return 0 if report["assessment"]["classification"] == "tcp_connected" else 1
+    return 0 if report["assessment"]["classification"] in {"tcp_connected", "tls_validated"} else 1
+
