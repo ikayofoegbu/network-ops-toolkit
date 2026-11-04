@@ -8,8 +8,8 @@ traffic. Installation and GitHub access are preparation outside the five minutes
 
 Use a fresh folder so the original Windows-verified project remains intact.
 Prerequisites: Git, Python 3.11+ with the Python launcher, and the repository
-source. Until publication, authenticated repository access is required. Never
-paste tokens into commands. After publication, the clone requires no sign-in.
+source. The public repository can be cloned without signing in. Never paste
+tokens into commands.
 
 PowerShell:
 

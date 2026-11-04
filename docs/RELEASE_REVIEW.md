@@ -2,13 +2,12 @@
 
 Review date: November 4, 2026 (America/Edmonton).
 
-## Decision and remaining gate
+## Decision
 
 No publication-blocking secret, infrastructure disclosure or ownership conflict
-was found in the reviewed material. The original repository can be released
-after the owner approves a license and the release documentation passes CI.
-The repository remains private while that decision is pending. MIT is proposed;
-no license has been applied by this review.
+was found in the reviewed material. The owner approved the MIT license on November 4, 2026. The standard license
+and SPDX package metadata are included. Public release is authorized after the
+final commit passes CI; anonymous-access checks follow the visibility change.
 
 ## Scope and method
 
@@ -19,7 +18,7 @@ Baseline main: `e55263fe044ef4a2fbbf093897093ce215179b30`.
 - Traversed all nine commits to the root; every parent is present. Fetched all
   seven distinct recursive trees without truncation and all 37 unique blobs,
   including superseded/deleted file versions. Recomputed each Git blob SHA;
-  all matched GitHub. Current main contains 28 files.
+  all matched GitHub. The reviewed baseline contains 28 files.
 - Reviewed Python source, tests, examples, documentation, package metadata,
   workflow configuration and historical changes. Searched all historical blobs
   for common token formats, credential assignments, PEM keys, email addresses,
@@ -41,10 +40,10 @@ credentials rotated.
 | Credentials | No common credential/token matches or credential assignments found. One private-key blob is the explicitly disclosed test fixture below. |
 | Network data | IPv4 literals are loopback or documentation addresses; IPv6 examples use `2001:db8::/32`. Names are localhost, reserved/example names or public documentation/project URLs. No employer/customer topology or production configuration found. |
 | Ownership | History and documentation describe an independent, AI-assisted personal portfolio project. No third-party copyright headers, vendored packages or conflicting license notices found. This is not a legal provenance guarantee. |
-| Dependencies | No third-party runtime dependencies. Build backend is `setuptools>=68`; its lower bound is not a reproducibility lock. Python/OpenSSL and trust behavior vary by environment. |
+| Dependencies | No third-party runtime dependencies. Build backend is `setuptools>=77.0.3` (raised for SPDX metadata support); its lower bound is not a reproducibility lock. Python/OpenSSL and trust behavior vary by environment. |
 | Actions | Six-job Ubuntu/Windows, Python 3.11–3.13 matrix; read-only contents permission, checkout credentials not persisted, actions pinned by full commit SHA, ten-minute job timeout. No deployment or secret consumption in the workflow. |
 | Documentation | Corrected unsupported macOS claim, stale M4 branch instructions and obsolete release prohibition; added a safe offline-first quick start and current review evidence. |
-| Repository | Private, main default, no releases, wiki disabled, Pages absent. No unrelated repository settings changed. |
+| Repository at audit time | Private, main default, no releases, wiki disabled, Pages absent. Publication affects only this repository. No unrelated repository settings changed. |
 
 Branch-protection API access was denied to the integration. Rulesets API access
 was unavailable for the current private repository plan. Neither is represented
@@ -95,8 +94,8 @@ per-phase socket timeout. Windows presentation rehearsal remains owner work.
 
 Before public release:
 
-1. Obtain owner approval for MIT (copyright 2026 Ikechukwu Ofoegbu), then add the
-   standard license and package license metadata.
+1. Completed: owner approved MIT (copyright 2026 Ikechukwu Ofoegbu); standard
+   license and SPDX package metadata added.
 2. Update release status wording, run CI on the final release commit and review
    the result. Preserve historical PR/commit records.
 3. Change visibility only for this repository; pin it and add its working link

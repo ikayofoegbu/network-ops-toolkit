@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://www.python.org/)
 
-**Release candidate:** security review completed; license approval and public visibility change pending.
+**Independent engineering portfolio project · [MIT licensed](LICENSE)**
 
 An independent engineering portfolio project that turns narrow, reproducible network observations into evidence-driven troubleshooting reports. Current scope: **single-host DNS/TCP diagnostics with optional validated direct TLS**.
 
