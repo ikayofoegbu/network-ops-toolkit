@@ -6,8 +6,8 @@ Review date: November 4, 2026 (America/Edmonton).
 
 No publication-blocking secret, infrastructure disclosure or ownership conflict
 was found in the reviewed material. The owner approved the MIT license on November 4, 2026. The standard license
-and SPDX package metadata are included. Public release is authorized after the
-final commit passes CI; anonymous-access checks follow the visibility change.
+and SPDX package metadata are included. The licensed release commit passed all six CI jobs. The repository is public,
+pinned on the profile, and anonymously accessible; see the completion record below.
 
 ## Scope and method
 
@@ -85,20 +85,34 @@ may correctly flag its deliberate presence; do not use a blanket PEM exclusion.
 The older verification record preserves milestone-time evidence. Its historical
 pending statements are superseded by the newer dated records and linked CI.
 
-## Limits and publication checklist
+## Limits
 
 macOS and IPv6 TLS integration are unverified. The tool does not establish HTTP
 or application health, certificate revocation, an unobserved root cause, or a
 complete security assessment. DNS and trust-store loading are outside the
 per-phase socket timeout. Windows presentation rehearsal remains owner work.
 
-Before public release:
+## Publication completion
 
-1. Completed: owner approved MIT (copyright 2026 Ikechukwu Ofoegbu); standard
-   license and SPDX package metadata added.
-2. Update release status wording, run CI on the final release commit and review
-   the result. Preserve historical PR/commit records.
-3. Change visibility only for this repository; pin it and add its working link
-   to the profile README.
-4. Check repository, README, source and documentation without authentication,
-   then reconfirm unrelated repositories remain private.
+Completed November 4, 2026 (America/Edmonton).
+
+- Owner approved MIT. GitHub recognizes the MIT license; the built wheel includes
+  LICENSE and SPDX license metadata.
+- Licensed release commit: `c0c5f932fde1907a50d83121a27936641195d18b`.
+  [Release CI](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/41928155607):
+  all six Windows/Linux Python 3.11–3.13 jobs passed, 58 tests each; decoded
+  logs were inspected. Local installation, 58 tests, dependency checks,
+  installed demos, example JSON, wheel packaging and Markdown links passed.
+- Retrieved and checked 84 job logs across all 14 workflow runs available before
+  publication. No matches for the checked common token/private-key patterns were
+  found in those logs. This automated log scan is not a guarantee that every
+  possible secret format would be detected.
+- Repository visibility changed to public after GitHub's owner authentication.
+  No Git history was rewritten.
+- Toolkit pinned to the profile. The profile README now links to the source,
+  engineering case study and troubleshooting examples.
+- Requests with no authentication or cookies returned HTTP 200 for the profile,
+  repository, README, Python source, troubleshooting documentation and LICENSE.
+- All ten unrelated owned repositories were rechecked and remain private.
+- This completion record is a documentation update after the licensed release;
+  the linked run above tests the licensed release commit, not later commits.
