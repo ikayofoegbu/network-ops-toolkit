@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](https://www.python.org/)
 
-**Status: private development candidate. Public release is not authorized.**
+**Release candidate:** security review completed; license approval and public visibility change pending.
 
 An independent engineering portfolio project that turns narrow, reproducible network observations into evidence-driven troubleshooting reports. Current scope: **single-host DNS/TCP diagnostics with optional validated direct TLS**.
 
@@ -14,19 +14,24 @@ An independent engineering portfolio project that turns narrow, reproducible net
 - Optionally validates a direct TLS handshake on the same TCP connection, preserving certificate, hostname, timeout and handshake outcomes.
 - Prints a readable report or structured JSON with suggested **next checks**, not invented root causes.
 - Includes a no-network synthetic demo, offline unit tests and a controlled local-only loopback integration test.
-- Runs on Windows, macOS and Linux with Python 3.11+ and **no third-party runtime dependencies**.
+- Tested in CI on Windows and Linux with Python 3.11–3.13 and **no third-party runtime dependencies**. macOS has not been verified.
 
 ## Quick start
 
-From the repository root, on Windows PowerShell:
+Install Python 3.11+ and Git, then obtain the source:
+
+```text
+git clone https://github.com/ikayofoegbu/network-ops-toolkit.git
+cd network-ops-toolkit
+```
+
+From the repository root, on Windows PowerShell (no activation or execution-policy changes required):
 
 ```powershell
 py -3 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e .
-python -m netops demo
-python -m netops probe --host example.com --port 443 --timeout 2
-python -m netops probe --host example.com --port 443 --json
+& .\.venv\Scripts\python.exe -m pip install -e .
+& .\.venv\Scripts\python.exe -m netops demo
+& .\.venv\Scripts\python.exe -m netops demo --json
 ```
 
 On macOS/Linux:
@@ -36,10 +41,16 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
 python -m netops demo
-python -m netops probe --host example.com --port 443 --timeout 2
+python -m netops demo --json
 ```
 
-The demo is synthetic and **does not access the network**. Real probe results vary by system, DNS, endpoint and policy. A failed real probe returns exit code `1`; input/usage errors return `2`; TCP connectivity established returns `0`. When `--tls` is requested, exit `0` requires at least one validated TLS handshake; TCP success alone is insufficient.
+The demo is synthetic and **does not access the network**. Installation downloads build tooling if needed; the package itself has no third-party runtime dependencies. Probe only an endpoint you control or are authorized to test:
+
+```text
+python -m netops probe --host YOUR_AUTHORIZED_HOST --port 443 --timeout 2 --tls --json
+```
+
+On Windows without activation, replace `python` with `& .\.venv\Scripts\python.exe` in subsequent commands. Replace `YOUR_AUTHORIZED_HOST` with a hostname or IP address, not a URL. Real results vary by system, DNS, endpoint and policy. A failed real probe returns exit code `1`; input/usage errors return `2`; TCP connectivity established returns `0`. When `--tls` is requested, exit `0` requires at least one validated TLS handshake; TCP success alone is insufficient.
 
 ### Synthetic demonstration
 
@@ -143,15 +154,17 @@ examples/demo-report.json reproducible JSON output from the synthetic demo
 
 Do not put employer IP ranges, production hostnames, credentials, troubleshooting exports or operational topology in this repo. No application logging, telemetry, persistent result storage or external API calls are included. Python SSL configuration, including SSLKEYLOGFILE when set by the operator, remains subject to Python standard-library behavior. Real probes initiate the specific TCP connection you requested, and should only be used where you have authorization. Run the `demo` command if you only want to inspect output without network activity.
 
-## Roadmap and release gate
+## Engineering milestones
 
 - **M1:** single-target diagnostics, 29 unit/loopback tests, documentation and synthetic demo. Windows installation and local tests confirmed by the owner.
 - **M2 (integrated):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
 - **M3 (integrated):** optional validated direct TLS diagnostics, mocked failures and controlled loopback integration tests. [PR #1](https://github.com/ikayofoegbu/network-ops-toolkit/pull/1) merged after owner approval; all six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40429821370) passed with 54 tests per job.
 
-- **M4 (interview preparation):** three synthetic cases, engineering case study and prepared Windows demo guide; no public release implied.
+- **M4 (integrated):** three synthetic cases, engineering case study and prepared Windows demo guide. All six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40431342310) passed with 58 tests per job.
 
-Before making this repository **public**: review all code and git history for sensitive material; choose a license; confirm the documentation and sample output; run CI; and make the owner approval decision. A passing test suite does not prove cross-network connectivity in every environment.
+## Release review and limitations
 
-This is an original personal portfolio project, not an employer deliverable and not part of Follyhouse Studios or Tell On Yourself.
+See the [security and release review](docs/RELEASE_REVIEW.md) for the reviewed commit history, disposable fixture exception, validation evidence and remaining release gates. A passing test suite does not prove cross-network connectivity in every environment. IPv6 TLS integration, macOS execution, certificate revocation and application health are not established.
+
+This is an independent, AI-assisted personal portfolio project, not an employer deliverable.
 

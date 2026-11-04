@@ -79,8 +79,8 @@ trust stores, Python/OpenSSL behavior and runner images can change.
 
 The next decision should follow a real use case, such as an explicitly bounded
 application-level check. I would agree its safety limits, output contract and
-acceptance criteria before adding it. Public release and licensing remain
-separate owner decisions.
+acceptance criteria before adding it. See the [release review](RELEASE_REVIEW.md)
+for the current publication and licensing status.
 
 ## Short explanation to rehearse
 

@@ -7,9 +7,9 @@ traffic. Installation and GitHub access are preparation outside the five minutes
 ## Preparation
 
 Use a fresh folder so the original Windows-verified project remains intact.
-Prerequisites: Git, Python 3.11+ with the Python launcher, and access to the
-private repository. Use your usual GitHub sign-in; do not paste tokens into
-commands or share the private repository without an explicit sharing decision.
+Prerequisites: Git, Python 3.11+ with the Python launcher, and the repository
+source. Until publication, authenticated repository access is required. Never
+paste tokens into commands. After publication, the clone requires no sign-in.
 
 PowerShell:
 
@@ -24,15 +24,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Clone failed.' }
 Set-Location -LiteralPath $demoPath
 ```
 
-Before M4 is merged, switch this fresh checkout to the review branch:
-
-```powershell
-git switch feat/m4-interview-demo
-if ($LASTEXITCODE -ne 0) { throw 'Review branch checkout failed.' }
-```
-
-After M4 is merged, a fresh default-branch clone already includes the material;
-omit that branch-switch step. Then prepare the environment without activation
+M4 is integrated into the default branch. Prepare the environment without activation
 scripts or execution-policy changes:
 
 ```powershell
@@ -44,7 +36,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Installation failed.' }
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed; resolve this before the demo.' }
 ```
 
-Expect 58 tests on the M4 candidate. The suite includes real local loopback
+Expect 58 tests. The suite includes real local loopback
 traffic; it does not probe external systems. The three presentation cases below
 are entirely synthetic. Open the engineering case study and the latest passing
 CI run in advance. Have the stored JSON available as a clearly labelled backup
@@ -86,7 +78,7 @@ different exit semantics; do not present the renderer as a live probe.
 
 Practice once on your own Windows device before using this in an interview.
 Cross-platform CI of the Python examples does not certify your Git installation,
-private-repository authentication, PowerShell environment, presentation setup or
+repository access, PowerShell environment, presentation setup or
 five-minute delivery time. This guide is a prepared runbook, not a claim that you
 have already rehearsed it. Keep a screenshot or saved CI page ready if the
 interview environment has no browser access; clearly identify it as saved evidence.
