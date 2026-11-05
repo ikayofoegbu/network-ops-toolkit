@@ -13,7 +13,7 @@ A Python command-line toolkit for **single-host DNS and TCP diagnostics with opt
 - Distinguishes TCP connected, refused, timeout, unreachable and local permission errors where the OS exposes these distinctions.
 - Optionally validates a direct TLS handshake on the same TCP connection, preserving certificate, hostname, timeout and handshake outcomes.
 - Produces readable reports or structured JSON with observations and suggested next checks.
-- Includes a no-network synthetic demo, offline unit tests and a controlled local-only loopback integration test.
+- Includes offline examples, unit tests and five TCP/TLS loopback integration tests.
 - Tested in CI on Windows and Linux with Python 3.11–3.13 and **no third-party runtime dependencies**.
 
 ## Quick start
@@ -34,7 +34,7 @@ py -3 -m venv .venv
 & .\.venv\Scripts\python.exe -m netops demo --json
 ```
 
-On macOS/Linux:
+On Linux:
 
 ```bash
 python3 -m venv .venv
@@ -111,7 +111,7 @@ certificate revocation status, or a complete security assessment.
 
 **Dual-stack caution:** all individual address attempts appear in the report. A success on one address does not erase failures on another. `--timeout` is per TCP connect and, when enabled, per TLS handshake, not a whole-run deadline; the probe attempts at most 8 resolved addresses. DNS itself is subject to the system resolver's timing, not this TCP timeout.
 
-## Reproduce tests with no external network probes
+## Run the test suite
 
 ```powershell
 python -m unittest discover -s tests -v

@@ -1,4 +1,4 @@
-"""Keep offline interview examples truthful, reproducible and in sync."""
+"""Verify offline troubleshooting examples and stored report consistency."""
 
 import contextlib
 import importlib.util
