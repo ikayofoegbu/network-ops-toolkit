@@ -4,9 +4,10 @@ Review date: November 4, 2026 (America/Edmonton).
 
 ## Decision
 
-No publication-blocking secret, infrastructure disclosure or ownership conflict
-was found in the reviewed material. The owner approved the MIT license on November 4, 2026. The standard license
-and SPDX package metadata are included. The licensed release commit passed all six CI jobs. The repository is public,
+The reachable-history review found no publication-blocking credentials or
+infrastructure disclosures. The project is MIT licensed, with standard license
+text and SPDX package metadata. The licensed release passed all six CI jobs.
+The repository is public,
 pinned on the profile, and anonymously accessible; see the completion record below.
 
 ## Scope and method
@@ -43,11 +44,7 @@ credentials rotated.
 | Dependencies | No third-party runtime dependencies. Build backend is `setuptools>=77.0.3` (raised for SPDX metadata support); its lower bound is not a reproducibility lock. Python/OpenSSL and trust behavior vary by environment. |
 | Actions | Six-job Ubuntu/Windows, Python 3.11–3.13 matrix; read-only contents permission, checkout credentials not persisted, actions pinned by full commit SHA, ten-minute job timeout. No deployment or secret consumption in the workflow. |
 | Documentation | Corrected unsupported macOS claim, stale M4 branch instructions and obsolete release prohibition; added a safe offline-first quick start and current review evidence. |
-| Repository at audit time | Private, main default, no releases, wiki disabled, Pages absent. Publication affects only this repository. No unrelated repository settings changed. |
-
-Branch-protection API access was denied to the integration. Rulesets API access
-was unavailable for the current private repository plan. Neither is represented
-as an independently verified enforcement control.
+| Repository at audit time | Private, main default, no releases, wiki disabled, Pages absent. |
 
 ## Disposable TLS fixture exception
 
@@ -82,21 +79,21 @@ may correctly flag its deliberate presence; do not use a blanket PEM exclusion.
   passed all six jobs, 58 tests per job. All six decoded job logs were inspected.
   These are results for the baseline commit, not a claim about later commits.
 
-The older verification record preserves milestone-time evidence. Its historical
-pending statements are superseded by the newer dated records and linked CI.
+The [verification record](VERIFICATION.md) consolidates the release checks and
+historical milestone results.
 
 ## Limits
 
 macOS and IPv6 TLS integration are unverified. The tool does not establish HTTP
 or application health, certificate revocation, an unobserved root cause, or a
 complete security assessment. DNS and trust-store loading are outside the
-per-phase socket timeout. Windows presentation rehearsal remains owner work.
+per-phase socket timeout.
 
 ## Publication completion
 
 Completed November 4, 2026 (America/Edmonton).
 
-- Owner approved MIT. GitHub recognizes the MIT license; the built wheel includes
+- GitHub recognizes the MIT license; the built wheel includes
   LICENSE and SPDX license metadata.
 - Licensed release commit: `c0c5f932fde1907a50d83121a27936641195d18b`.
   [Release CI](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/41928155607):
@@ -107,12 +104,10 @@ Completed November 4, 2026 (America/Edmonton).
   publication. No matches for the checked common token/private-key patterns were
   found in those logs. This automated log scan is not a guarantee that every
   possible secret format would be detected.
-- Repository visibility changed to public after GitHub's owner authentication.
-  No Git history was rewritten.
+- The repository was published with its reviewed commit history preserved.
 - Toolkit pinned to the profile. The profile README now links to the source,
   engineering case study and troubleshooting examples.
 - Requests with no authentication or cookies returned HTTP 200 for the profile,
   repository, README, Python source, troubleshooting documentation and LICENSE.
-- All ten unrelated owned repositories were rechecked and remain private.
 - This completion record is a documentation update after the licensed release;
   the linked run above tests the licensed release commit, not later commits.

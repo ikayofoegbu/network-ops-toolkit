@@ -4,7 +4,7 @@
 
 **Independent engineering portfolio project · [MIT licensed](LICENSE)**
 
-An independent engineering portfolio project that turns narrow, reproducible network observations into evidence-driven troubleshooting reports. Current scope: **single-host DNS/TCP diagnostics with optional validated direct TLS**.
+A Python command-line toolkit for **single-host DNS and TCP diagnostics with optional validated direct TLS**. It records connection outcomes by address and produces readable or JSON reports with practical troubleshooting checks.
 
 ## What it does
 
@@ -12,9 +12,9 @@ An independent engineering portfolio project that turns narrow, reproducible net
 - Attempts a single TCP port on up to **8 distinct resolved addresses** (no port ranges or network scanning).
 - Distinguishes TCP connected, refused, timeout, unreachable and local permission errors where the OS exposes these distinctions.
 - Optionally validates a direct TLS handshake on the same TCP connection, preserving certificate, hostname, timeout and handshake outcomes.
-- Prints a readable report or structured JSON with suggested **next checks**, not invented root causes.
+- Produces readable reports or structured JSON with observations and suggested next checks.
 - Includes a no-network synthetic demo, offline unit tests and a controlled local-only loopback integration test.
-- Tested in CI on Windows and Linux with Python 3.11–3.13 and **no third-party runtime dependencies**. macOS has not been verified.
+- Tested in CI on Windows and Linux with Python 3.11–3.13 and **no third-party runtime dependencies**.
 
 ## Quick start
 
@@ -74,7 +74,7 @@ Suggested next checks:
 
 Use `netops probe --host HOST --port PORT --tls --json` only against a system you
 control or are authorized to test. Direct TLS services are supported; STARTTLS,
-HTTP requests and application health checks are outside this milestone.
+HTTP requests and application health checks are outside the current scope.
 
 Certificate chain and hostname validation stay enabled using Python's default
 client context and system trust. There is no insecure mode or automatic retry
@@ -117,25 +117,22 @@ certificate revocation status, or a complete security assessment.
 python -m unittest discover -s tests -v
 ```
 
-Unit tests inject fake DNS and TCP dependencies and **do not send packets**. Local integration tests create temporary listeners on `127.0.0.1` to verify real TCP and TLS behavior, including trusted TLS, hostname mismatch, untrusted certificate and handshake timeout. They do not contact external systems. TLS fixtures are disposable test material; their CA is trusted only inside individual test contexts. The test suite currently contains 58 tests, including checks for the synthetic interview examples. GitHub Actions is **configured** to test Python 3.11–3.13 on Linux and Windows; the initial GitHub Actions run passed all six jobs ([evidence](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40427289295)). Any future external-network integration tests must be separately approved and run only against systems you control or are authorized to test.
+The suite contains **58 tests**. Unit tests cover controlled DNS, TCP and TLS outcomes. Integration tests use temporary listeners on `127.0.0.1` for real TCP connections and TLS handshakes, including certificate validation, hostname mismatch, untrusted certificates and handshake timeout. The test CA is loaded into individual SSL contexts.
 
-## Interview demonstration
+GitHub Actions tests Python 3.11, 3.12 and 3.13 on Windows and Linux. All six jobs in the [release verification run](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/41929088813) passed with 58 tests each. See the [verification record](docs/VERIFICATION.md) for commands, coverage and milestone results.
 
-Three reproducible synthetic cases illustrate DNS failure, TCP refusal and TCP
-success with TLS validation failure. They send no network traffic and use the
-existing report/assessment path with fake observations:
+## Troubleshooting examples
+
+Three reproducible examples cover DNS failure, TCP refusal, and TCP success followed by TLS certificate validation failure. They use simulated observations through the same report-generation path as the live probe and send no network traffic.
 
 ```text
 python examples/troubleshooting_cases.py all
 python examples/troubleshooting_cases.py tls-failure --json
 ```
 
-The renderer returns 0 when it prints successfully, including an expected
-simulated failure. It is distinct from the live probe's connectivity exit codes.
-See the [case explanations](docs/TROUBLESHOOTING_CASES.md),
-[engineering case study](docs/ENGINEERING_CASE_STUDY.md) and
-[five-minute Windows demo guide](docs/WINDOWS_DEMO.md). The guide is prepared;
-owner rehearsal on a Windows device is still required before an interview.
+The example renderer returns `0` after successfully printing a report. The live probe uses the connectivity exit codes described above.
+
+Read the [case walkthroughs](docs/TROUBLESHOOTING_CASES.md), [engineering case study](docs/ENGINEERING_CASE_STUDY.md) and [Windows walkthrough](docs/WINDOWS_DEMO.md).
 
 ## Repository structure
 
@@ -154,17 +151,18 @@ examples/demo-report.json reproducible JSON output from the synthetic demo
 
 Do not put employer IP ranges, production hostnames, credentials, troubleshooting exports or operational topology in this repo. No application logging, telemetry, persistent result storage or external API calls are included. Python SSL configuration, including SSLKEYLOGFILE when set by the operator, remains subject to Python standard-library behavior. Real probes initiate the specific TCP connection you requested, and should only be used where you have authorization. Run the `demo` command if you only want to inspect output without network activity.
 
-## Engineering milestones
+## Documentation
 
-- **M1:** single-target diagnostics, 29 unit/loopback tests, documentation and synthetic demo. Windows installation and local tests confirmed by the owner.
-- **M2 (integrated):** private GitHub integration and automated verification on Python 3.11–3.13 across Windows and Linux. The initial six-job matrix passed; see [verification evidence](docs/VERIFICATION.md).
-- **M3 (integrated):** optional validated direct TLS diagnostics, mocked failures and controlled loopback integration tests. [PR #1](https://github.com/ikayofoegbu/network-ops-toolkit/pull/1) merged after owner approval; all six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40429821370) passed with 54 tests per job.
+- [Engineering case study](docs/ENGINEERING_CASE_STUDY.md): architecture, design decisions and the Windows TLS fixture fix.
+- [Troubleshooting cases](docs/TROUBLESHOOTING_CASES.md): interpreting DNS, TCP and TLS results.
+- [Windows walkthrough](docs/WINDOWS_DEMO.md): installation, tests and example commands.
+- [Verification record](docs/VERIFICATION.md): automated and local validation evidence.
+- [Security and release review](docs/RELEASE_REVIEW.md): history review, dependency checks and disposable TLS fixtures.
 
-- **M4 (integrated):** three synthetic cases, engineering case study and prepared Windows demo guide. All six [post-merge CI jobs](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/40431342310) passed with 58 tests per job.
+## Supported scope
 
-## Release review and limitations
+The toolkit reports DNS resolution, TCP connectivity and optional direct TLS validation. HTTP, STARTTLS and certificate revocation checks are outside its scope. Windows and Linux are covered by CI; macOS execution and IPv6 TLS integration are outside the current test matrix. DNS and trust-store loading follow the host environment's timing and configuration.
 
-See the [security and release review](docs/RELEASE_REVIEW.md) for the reviewed commit history, disposable fixture exception, validation evidence and remaining release gates. A passing test suite does not prove cross-network connectivity in every environment. IPv6 TLS integration, macOS execution, certificate revocation and application health are not established.
+## Project and license
 
-This is an independent, AI-assisted personal portfolio project, not an employer deliverable.
-
+Independent engineering project by Ikay Ofoegbu, developed with AI assistance. Released under the [MIT license](LICENSE).

@@ -4,16 +4,12 @@
 
 A statement such as "the network is down" collapses several different questions:
 did the name resolve, did a TCP connection succeed, and did TLS validation pass?
-This independent portfolio project makes those observations explicit for one
-host and port. It reports what was observed and suggests the next useful check
-without claiming to identify an unobserved root cause.
+The toolkit records those observations separately for one host and port,
+preserves per-address outcomes, and suggests the next useful check.
 
-The scope is intentionally small: Python 3.11+, Windows and Linux CI, no
-third-party runtime dependencies, and at most eight distinct resolved addresses.
-It is not an employer deliverable, an incident history, or a production
-monitoring/scanning system. Implementation was AI-assisted; scope and merges
-were owner-approved. The evidence is reproducible tests and recorded CI, not a
-claim of manual authorship of every line.
+The implementation uses Python 3.11+, has no third-party runtime dependencies,
+and attempts at most eight distinct resolved addresses. Windows and Linux
+behavior is verified by a six-job CI matrix.
 
 ## Decisions and trade-offs
 
@@ -34,7 +30,7 @@ validated TLS for exit 0 when TLS was requested; TCP success alone is insufficie
 
 ## A cross-platform defect found by CI
 
-The original TLS candidate passed locally and on Linux. Windows CI exposed a
+The initial TLS implementation passed locally and on Linux. Windows CI exposed a
 problem in the test server fixture: an immediate handshake-only client close
 could surface as connection abort/reset 10053/10054 and fail fixture cleanup
 before the report assertions ran.
@@ -56,42 +52,45 @@ The lesson is specific: local success did not establish Windows fixture
 correctness. CI provided evidence to narrow the fix instead of weakening the
 test's security requirement.
 
-## What the evidence supports
+## Verification
 
-M3 retained 29 original tests and added 25 TLS tests. The 54-test suite includes
-mocked failure paths and five real local TCP/TLS integration tests. A separate
-manual installed-CLI check reached a local TLS server and returned validated TLS
-with exit 0. These checks establish the tested behavior in those environments.
+The current suite contains **58 tests**: 29 original DNS/TCP tests, 25 TLS
+tests and four regression tests for the example reports. Integration tests
+exercise real TCP connections and TLS handshakes on loopback, including trusted
+TLS, hostname mismatch, untrusted certificates and handshake timeout.
 
-M4 adds the [three synthetic cases](TROUBLESHOOTING_CASES.md) and a
-[five-minute Windows demo](WINDOWS_DEMO.md), plus regression checks for example
-generation, simulation labelling, offline behavior and stored-JSON consistency.
-Its pull request records the candidate's actual CI results separately from the
-historical M3 evidence above.
+The [release verification run](https://github.com/ikayofoegbu/network-ops-toolkit/actions/runs/41929088813)
+passed all six Windows/Linux Python 3.11-3.13 jobs, with 58 tests per job. Local
+checks also verified editable installation, installed CLI commands, JSON
+output, example consistency and wheel license metadata.
 
-## Limits I would state in an interview
+The [three troubleshooting cases](TROUBLESHOOTING_CASES.md) exercise the same
+report-generation path using deterministic simulated observations. Separate
+loopback integration tests exercise real socket behavior. The
+[Windows walkthrough](WINDOWS_DEMO.md) provides reproducible commands.
 
-I have not established real production connectivity, application health, every
-certificate defect, certificate revocation status, macOS compatibility, or a
-complete security assessment. IPv4 local TLS was tested; IPv6 TLS was not
-separately integrated. A trust failure can mask a later hostname error. Default
-trust stores, Python/OpenSSL behavior and runner images can change.
+## Operational scope
 
-The next decision should follow a real use case, such as an explicitly bounded
-application-level check. I would agree its safety limits, output contract and
-acceptance criteria before adding it. See the [release review](RELEASE_REVIEW.md)
-for the current publication and licensing status.
+The tool checks name resolution, one TCP port and optional direct TLS. HTTP,
+STARTTLS and certificate revocation checks are outside its scope. TLS success
+means certificate and hostname validation passed against the selected trust
+store; application health requires application-layer checks.
 
-## Short explanation to rehearse
+The integration suite covers IPv4 loopback TLS. macOS execution and IPv6 TLS
+integration are outside the current CI coverage. Trust-store configuration,
+Python/OpenSSL versions and runner images affect environment-specific behavior.
+A chain-validation error can precede a hostname error, so reports preserve the
+verification error returned by OpenSSL.
 
-"I built a small, AI-assisted network diagnostic project around evidence rather
-than automatic root-cause claims. It distinguishes DNS, TCP and optional TLS,
-keeps certificate validation enabled, and preserves failures across addresses.
-I used deterministic unit tests and controlled loopback integration tests, then
-verified the supported Python versions on Windows and Linux. Windows CI caught
-a fixture lifecycle issue that local testing missed. The scope is narrow, and I
-can show exactly what the tool establishes and what it does not."
+## Implementation summary
 
-Use this wording only after rehearsing the demo and being able to explain the
-code paths and limitations in your own words. No personal Windows rehearsal of
-the M4 guide has been claimed.
+DNS, TCP and TLS observations remain separate throughout report generation.
+TCP success is retained when TLS validation fails, each address keeps its own
+outcome, and certificate verification stays enabled. Dependency injection makes
+failure paths reproducible, while loopback integration tests verify the real
+socket and TLS behavior. CI exposed a Windows fixture-lifecycle issue and
+validated the targeted correction without weakening the client security checks.
+
+Independent engineering project by Ikay Ofoegbu, developed with AI assistance.
+See the [verification record](VERIFICATION.md) and [release review](RELEASE_REVIEW.md)
+for the supporting checks.
